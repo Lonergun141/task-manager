@@ -1,7 +1,10 @@
-import { useLoaderData } from "react-router";
+import { useState } from "react";
+import { useLoaderData, useRevalidator } from "react-router";
 import type { Route } from "./+types/home";
-import { fetchTasks } from "api/task";
+import { fetchTasks, createTask, updateTask, deleteTask, toggleTaskComplete } from "api/task";
 import TaskTable from "components/TaskTable";
+import AddTaskModal from "components/AddTaskModal";
+import EditTaskModal from "components/EditTaskModal";
 import type { Task } from "types/task";
 
 export function meta({ }: Route.MetaArgs) {
@@ -18,17 +21,43 @@ export async function clientLoader() {
 
 export default function Home() {
     const { tasks } = useLoaderData<{ tasks: Task[] }>();
+    const revalidator = useRevalidator();
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editingTask, setEditingTask] = useState<Task | null>(null);
 
     const handleAdd = () => {
-        console.log("Add task");
+        setShowAddModal(true);
+    };
+
+    const handleAddSubmit = async (task: { title: string; description: string; completed: boolean }) => {
+        await createTask(task);
+        setShowAddModal(false);
+        revalidator.revalidate();
     };
 
     const handleEdit = (task: Task) => {
-        console.log("Edit task", task.id);
+        setEditingTask(task);
+        setShowEditModal(true);
     };
 
-    const handleDelete = (task: Task) => {
-        console.log("Delete task", task.id);
+    const handleEditSubmit = async (id: number, data: { title: string; description: string }) => {
+        await updateTask(id, data);
+        setShowEditModal(false);
+        setEditingTask(null);
+        revalidator.revalidate();
+    };
+
+    const handleDelete = async (task: Task) => {
+        if (window.confirm(`Are you sure you want to delete "${task.title}"?`)) {
+            await deleteTask(task.id);
+            revalidator.revalidate();
+        }
+    };
+
+    const handleToggleComplete = async (task: Task) => {
+        await toggleTaskComplete(task.id, !task.completed);
+        revalidator.revalidate();
     };
 
     return (
@@ -41,6 +70,18 @@ export default function Home() {
                 onAdd={handleAdd}
                 onEdit={handleEdit}
                 onDelete={handleDelete}
+                onToggleComplete={handleToggleComplete}
+            />
+            <AddTaskModal
+                isOpen={showAddModal}
+                onClose={() => setShowAddModal(false)}
+                onSubmit={handleAddSubmit}
+            />
+            <EditTaskModal
+                task={editingTask}
+                isOpen={showEditModal}
+                onClose={() => setShowEditModal(false)}
+                onSubmit={handleEditSubmit}
             />
         </div>
     );
