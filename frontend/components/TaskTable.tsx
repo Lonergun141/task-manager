@@ -1,12 +1,20 @@
 import type { TaskTableProps } from "types/task";
 
-export default function TaskTable({ tasks, onAdd, onEdit, onDelete, onToggleComplete }: TaskTableProps) {
+export default function TaskTable({
+    tasks,
+    onAdd,
+    onEdit,
+    onDelete,
+    onToggleComplete,
+    isBusy,
+}: TaskTableProps) {
     return (
-        <div>
+        <div aria-busy={isBusy}>
             <div className="mb-4 flex items-end justify-end">
                 <button
                     onClick={onAdd}
-                    className="bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
+                    disabled={isBusy}
+                    className="rounded bg-blue-500 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                     Add Task
                 </button>
@@ -58,8 +66,9 @@ export default function TaskTable({ tasks, onAdd, onEdit, onDelete, onToggleComp
                                         <select
                                             value={task.completed ? "completed" : "pending"}
                                             onChange={() => onToggleComplete(task)}
+                                            disabled={isBusy}
                                             className={`rounded border border-gray-300 px-2 py-1 text-sm font-medium focus:border-blue-500 focus:outline-none ${task.completed ? "text-green-600" : "text-yellow-600"
-                                                }`}
+                                                } disabled:cursor-not-allowed disabled:opacity-60`}
                                         >
                                             <option value="pending" className="text-yellow-600">Pending</option>
                                             <option value="completed" className="text-green-600">Completed</option>
@@ -71,13 +80,15 @@ export default function TaskTable({ tasks, onAdd, onEdit, onDelete, onToggleComp
                                     <td className="whitespace-nowrap px-6 py-4 text-sm">
                                         <button
                                             onClick={() => onEdit(task)}
-                                            className="mr-3 text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                                            disabled={isBusy}
+                                            className="mr-3 font-medium text-blue-600 transition-colors hover:text-blue-800 disabled:cursor-not-allowed disabled:opacity-60"
                                         >
                                             Edit
                                         </button>
                                         <button
                                             onClick={() => onDelete(task)}
-                                            className="text-red-600 hover:text-red-800 font-medium transition-colors"
+                                            disabled={isBusy}
+                                            className="font-medium text-red-600 transition-colors hover:text-red-800 disabled:cursor-not-allowed disabled:opacity-60"
                                         >
                                             Delete
                                         </button>

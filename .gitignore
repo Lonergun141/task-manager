@@ -1,6 +1,4 @@
-# =========================
 # Python / Django (Backend)
-# =========================
 __pycache__/
 *.py[cod]
 *$py.class

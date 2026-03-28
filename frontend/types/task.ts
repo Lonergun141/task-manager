@@ -12,6 +12,7 @@ export interface TaskTableProps {
   onEdit: (task: Task) => void;
   onDelete: (task: Task) => void;
   onToggleComplete: (task: Task) => void;
+  isBusy: boolean;
 }
 
 export interface AddTaskModalProps {
