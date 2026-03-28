@@ -27,17 +27,17 @@ export const createTask = async (
 
 export const updateTask = async (
     id: number,
-    task: Omit<Task, "id" | "created_at">
+    task: Pick<Task, "title" | "description">
 ): Promise<Task> => {
     const response = await api.put<Task>(`/tasks/${id}/`, task);
     return response.data;
 };
 
-export const patchTask = async (
+export const toggleTaskComplete = async (
     id: number,
-    task: Partial<Omit<Task, "id" | "created_at">>
+    completed: boolean
 ): Promise<Task> => {
-    const response = await api.patch<Task>(`/tasks/${id}/`, task);
+    const response = await api.patch<Task>(`/tasks/${id}/`, { completed });
     return response.data;
 };
 

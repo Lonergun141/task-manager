@@ -1,6 +1,6 @@
 import type { TaskTableProps } from "types/task";
 
-export default function TaskTable({ tasks, onAdd, onEdit, onDelete }: TaskTableProps) {
+export default function TaskTable({ tasks, onAdd, onEdit, onDelete, onToggleComplete }: TaskTableProps) {
     return (
         <div>
             <div className="mb-4 flex items-end justify-end">
@@ -13,7 +13,7 @@ export default function TaskTable({ tasks, onAdd, onEdit, onDelete }: TaskTableP
             </div>
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-gray-50">
+                    <thead>
                         <tr>
                             <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                                 ID
@@ -55,14 +55,15 @@ export default function TaskTable({ tasks, onAdd, onEdit, onDelete }: TaskTableP
                                         {task.description || "—"}
                                     </td>
                                     <td className="whitespace-nowrap px-6 py-4 text-sm">
-                                        <span
-                                            className={`font-medium ${task.completed
-                                                ? "text-green-600"
-                                                : "text-yellow-600"
+                                        <select
+                                            value={task.completed ? "completed" : "pending"}
+                                            onChange={() => onToggleComplete(task)}
+                                            className={`rounded border border-gray-300 px-2 py-1 text-sm font-medium focus:border-blue-500 focus:outline-none ${task.completed ? "text-green-600" : "text-yellow-600"
                                                 }`}
                                         >
-                                            {task.completed ? "Completed" : "Pending"}
-                                        </span>
+                                            <option value="pending" className="text-yellow-600">Pending</option>
+                                            <option value="completed" className="text-green-600">Completed</option>
+                                        </select>
                                     </td>
                                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                                         {new Date(task.created_at).toLocaleDateString()}
